@@ -4,7 +4,7 @@ import os
 
 # IP address and port
 SERVER_HOST = "0.0.0.0"
-SERVER_PORT = 5001
+SERVER_PORT = 12345
 
 #receive 4096 bytes each time
 BUFFER_SIZE = 4096
@@ -12,7 +12,7 @@ SEPARATOR = "<SEPARATOR>"
 
 s = socket.socket()
 
-s.bind((SERVER_HOST, SERVER_PORT))
+s.bind((SERVER_HOST,SERVER_PORT))
 
 # enabling our server to accept connections
 # 5 here is the number of unaccepted connections that
@@ -31,13 +31,13 @@ received = client_socket.recv(BUFFER_SIZE).decode()
 filename, filesize = received.split(SEPARATOR)
 
 #remove absolute path is there is
-filename = os.path.basename(filename)
+filename = os.path.basename(filename) + ".rcv"
 filesize = int(filesize)
 
 #start receiving file from socket
 progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
 
-#'wb'= write in binary
+#'wb': write in binary
 with open(filename, "wb") as f :
     while True :
         bytes_read = client_socket.recv(BUFFER_SIZE)
