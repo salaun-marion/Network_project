@@ -7,7 +7,7 @@ SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 12345
 
 #receive 4096 bytes each time
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 1400
 SEPARATOR = "<SEPARATOR>"
 
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
