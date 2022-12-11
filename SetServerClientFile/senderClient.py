@@ -18,18 +18,22 @@ filesize = os.path.getsize(filename)
 print(f"{filesize}")
 
 #create the client socket
-s = socket.socket()
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 #To etablish the connection
 print(f"[+] Connecting to {host}:{port}")
 s.connect((host,port))
-print(f"[+] Connected.")
+print("[+] Connected.")
 
 #send the filename and the filesize
 s.send(f"{filename}{SEPARATOR}{filesize}".encode())
 
 #start sending the file
 progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024 )
+# example for range
+# In [24]: list(range(10))
+# Out[24]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 
 with open(filename, "rb") as f:
     while True :
@@ -39,5 +43,5 @@ with open(filename, "rb") as f:
             break
         s.sendall(bytes_read)
         progress.update(len(bytes_read))
-
+s.send("bloubli".encode())
 s.close()

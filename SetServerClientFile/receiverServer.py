@@ -10,24 +10,17 @@ SERVER_PORT = 12345
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
+#'bind()'has only one argument possible : so we do a tuple ( , ) and we give to bind
+# same difference as 'print(x,y)' and 'print((x,y))'
 s.bind((SERVER_HOST,SERVER_PORT))
-
-# enabling our server to accept connections
-# 5 here is the number of unaccepted connections that
-# the system will allow before refusing new connections
-s.listen(5)
 
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-#accept connection if there is any
-client_socket, address = s.accept()
-print(f"[+] {address} is connected.")
-
-
 #receive file infos
-received = client_socket.recv(BUFFER_SIZE).decode()
+received, addr = s.recvfrom(BUFFER_SIZE)
+received = received.decode()
 filename, filesize = received.split(SEPARATOR)
 
 #remove absolute path is there is
@@ -40,13 +33,15 @@ progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_sc
 #'wb': write in binary
 with open(filename, "wb") as f :
     while True :
-        bytes_read = client_socket.recv(BUFFER_SIZE)
-        if not bytes_read:
+        #breakpoint()
+        bytes_read, address = s.recvfrom(BUFFER_SIZE)
+        if bytes_read == b"bloubli" :
             break
         f.write(bytes_read)
         progress.update(len(bytes_read))
 
-client_socket.close()
+#client_socket.close()
+
 s.close()
 
 
