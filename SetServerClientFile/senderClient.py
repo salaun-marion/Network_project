@@ -30,15 +30,19 @@ print("[+] Connected.")
 #thanks to random.random() in 90% of cases client will send the document
 #we create a function for this with a lambda
 
-def chance(action):
-    if random.random() > 0.1 :
-        action()
+#------- Error system to use after ----
+# def chance(action):
+#     if random.random() > 0.1 :
+#         action()
 
+#chance(lambda: s.send(f"{filename}{SEPARATOR}{filesize}".encode()))
+#-----------
 #send the filename and the filesize
-chance(lambda: s.send(f"{filename}{SEPARATOR}{filesize}".encode()))
+s.send(f"{filename}{SEPARATOR}{filesize}".encode())
 
 #start sending the file
 progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024 )
+
 # example for range
 # In [24]: list(range(10))
 # Out[24]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -50,7 +54,8 @@ with open(filename, "rb") as f:
         bytes_read = f.read(BUFFER_SIZE)
         if not bytes_read:
             break
-        chance(lambda: s.sendall(bytes_read))
+        #chance(lambda: s.sendall(bytes_read))
+        s.sendall(bytes_read)
         progress.update(len(bytes_read))
 s.send("bloubli".encode())
 s.close()
