@@ -33,11 +33,12 @@ progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_sc
 
 #'wb': write in binary
 frameCounter = 0
+
 with open(filename, "wb") as f :
     while True :
         bytes_read, address = s.recvfrom(BUFFER_SIZE)
         frameCounter+=1
-        s.send("ACK".encode())
+        s.sendto(str(frameCounter).encode(), address)
         if bytes_read == b"EndOfFile" :
             break
         f.write(bytes_read)

@@ -1,17 +1,26 @@
-SOURCE :
+------- SOURCES ------
 
+Tutorial about how to create a TCP connection :
 https://www.thepythoncode.com/article/send-receive-files-using-sockets-python
-https://stackoverflow.com/questions/12362542/python-server-only-one-usage-of-each-socket-address-is-normally-permitted
-https://stackoverflow.com/questions/37400974/error-unicode-error-unicodeescape-codec-cant-decode-bytes-in-position-2-3
 
-HOW TO :
+Problems encounters with Windows 10 : 
+- port occupied : https://stackoverflow.com/questions/12362542/python-server-only-one-usage-of-each-socket-address-is-normally-permitted
+- windows path needs r : https://stackoverflow.com/questions/37400974/error-unicode-error-unicodeescape-codec-cant-decode-bytes-in-position-2-3
+
+How to create argument system for CLI :
+https://www.youtube.com/watch?v=QJBVjBq4c7E
+
+Go-Back-N : https://www.youtube.com/watch?v=QD3oCelHJ20
+
+
+------- HOW TO ------
 
 1. Install `tqdm` package with this command line in Terminal : `pip3 install tqdm``
 2. Then create 2 terminal windows
-3. Run in the first terminal this command line `python receiverServer.py`
-4. Then run this command line on the other terminal `python senderClient.py`
+3. Run in the first terminal this command line `python receiverClient.py`
+4. Then run this command line on the other terminal `python senderServer.py`
 
------- SPECIFITY WINDOWS 10 ----
+****** WINDOWS 10 ******
 
 #IF THE PORT IS OCCUPPIED 
 

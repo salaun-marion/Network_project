@@ -19,11 +19,11 @@ port = 12345
 
 
 #name of the file we want to send and his size
-filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFile/"+namefile
+filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFile/scully_hitchcock_brooklyn99.png"
 filesize = os.path.getsize(filename)
 print(f"{filesize}")
 
-#create the client socket
+#create the server socket
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 #To etablish the connection
@@ -57,16 +57,21 @@ with open(filename, "rb") as f :
     while True :
         #read the bytes from the file 
         bytes_read = f.read(BUFFER_SIZE)
-        s.sendall(bytes_read)
-
-        if s.recvfrom() == b"ACK" :
-            ACKcounter += 1
-            print('ACK')
-        
-        elif not bytes_read:
+        if not bytes_read:
             break
-        #chance(lambda: s.sendall(bytes_read))
-        s.sendall(bytes_read)
+        
+        s.send(bytes_read)
+        try :
+            s.settimeout(2)
+            result = s.recv(BUFFER_SIZE)
+        except socket.timeout:
+            print("errrooorr")
+            break
+        ACKcounter += 1
+        print('ACK', int(result))
+
+        #chance(lambda: s.send(bytes_read))
+      
         progress.update(len(bytes_read))
 s.send("EndOfFile".encode())
 s.close()
