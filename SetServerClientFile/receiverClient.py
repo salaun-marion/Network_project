@@ -36,9 +36,11 @@ frameCounter = 0
 
 with open(filename, "wb") as f :
     while True :
+
         bytes_read, address = s.recvfrom(BUFFER_SIZE)
         frameCounter+=1
         s.sendto(str(frameCounter).encode(), address)
+        
         if bytes_read == b"EndOfFile" :
             break
         f.write(bytes_read)

@@ -52,23 +52,29 @@ progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_sca
 # Out[24]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 ACKcounter = 0
+frameCounter = 0
 
 with open(filename, "rb") as f :
     while True :
-        #read the bytes from the file 
-        bytes_read = f.read(BUFFER_SIZE)
+        if frameCounter - ACKcounter < WINDOW_SIZE:
+            #read the bytes from the file 
+            bytes_read = f.read(BUFFER_SIZE)
+            s.send(bytes_read)
+            frameCounter+=1
         if not bytes_read:
             break
-        
-        s.send(bytes_read)
         try :
             s.settimeout(2)
             result = s.recv(BUFFER_SIZE)
+            ACKcounter += 1
+            if ACKcounter == frameCounter :
+                break
         except socket.timeout:
-            print("errrooorr")
-            break
-        ACKcounter += 1
-        print('ACK', int(result))
+            print("Time is out. We sent back.")
+            # for i in range(ACKcounter,frameCounter):
+            #     s.send(bytes_read) 
+        
+        #print('ACK', int(frameCounter))
 
         #chance(lambda: s.send(bytes_read))
       
