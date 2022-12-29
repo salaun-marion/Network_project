@@ -31,10 +31,12 @@ filesize = int(filesize)
 #start receiving file from socket
 progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
 
-#'wb': write in binary
+#Go-back-N -------
+
 frameCounter = 0
 
 with open(filename, "wb") as f :
+    #'wb': write in binary
     while True :
 
         bytes_read, address = s.recvfrom(BUFFER_SIZE)
@@ -42,10 +44,9 @@ with open(filename, "wb") as f :
         s.sendto(str(frameCounter).encode(), address)
         
         if bytes_read == b"EndOfFile" :
-            # to stop writing
+      
             break
         seqNumber = int(bytes_read[-8:])
-        #breakpoint()
        
         if seqNumber == frameCounter :
             s.sendto(str(frameCounter).encode(), address)
@@ -54,10 +55,6 @@ with open(filename, "wb") as f :
             progress.update(len(bytes_read))
         else :
             print("Error")
-            #s.sendto(str(frameCounter-1).encode(), address)
-
-
-#client_socket.close()
 
 s.close()
 

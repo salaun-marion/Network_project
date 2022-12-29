@@ -37,8 +37,6 @@ print("[+] Connected.")
 def chance(bytes):
     if random.random() > 0.1:
         s.send(bytes)
-
-#chance(lambda: s.send(f"{filename}{SEPARATOR}{filesize}".encode()))
 #-----------
 #send the filename and the filesize
 s.send(f"{filename}{SEPARATOR}{filesize}".encode())
@@ -46,9 +44,7 @@ s.send(f"{filename}{SEPARATOR}{filesize}".encode())
 #start sending the file
 progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024)
 
-# example for range
-# In [24]: list(range(10))
-# Out[24]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#Go-Back-N -----
 
 ACKcounter = 0
 frameCounter = 0
@@ -56,12 +52,11 @@ frameCounter = 0
 with open(filename, "rb") as f :
     while True :
         if frameCounter - ACKcounter < WINDOW_SIZE:
-            #read the bytes from the file 
+           
             bytes_read = f.read(BUFFER_SIZE)
             if not bytes_read and ACKcounter == seqNumber:
                 break
             else :
-                #s.send(bytes_read+("%.8d"%seqNumber).encode())
                 chance(bytes_read+("%.8d"%seqNumber).encode())
                 seqNumber+=1
         try :
@@ -75,5 +70,6 @@ with open(filename, "rb") as f :
             seqNumber = ACKcounter
                 
         progress.update(len(bytes_read))
+        
 s.send("EndOfFile".encode())
 s.close()
