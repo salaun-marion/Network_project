@@ -35,11 +35,10 @@ print("[+] Connected.")
 #we create a function for this with a lambda
 
 #------- Error system to use after ----
-# def chance(action):
-#     if random.random() > 0.1 :
-#         action()
+def chance(bytes):
+    if random.random() > 0.1:
+        s.send(bytes)
 
-#chance(lambda: s.send(f"{filename}{SEPARATOR}{filesize}".encode()))
 #-----------
 #send the filename and the filesize
 s.send(f"{filename}{SEPARATOR}{filesize}".encode())
@@ -47,37 +46,31 @@ s.send(f"{filename}{SEPARATOR}{filesize}".encode())
 #start sending the file
 progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024)
 
-# example for range
-# In [24]: list(range(10))
-# Out[24]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
+#Go-Back-N starts here -----
 ACKcounter = 0
-frameCounter = 0
+seqNumber = 0
 
 with open(filename, "rb") as f :
     while True :
-        if frameCounter - ACKcounter < WINDOW_SIZE:
-            #read the bytes from the file 
+        if seqNumber - ACKcounter < WINDOW_SIZE:
             bytes_read = f.read(BUFFER_SIZE)
-            s.send(bytes_read)
-            frameCounter+=1
-        if not bytes_read:
-            break
-        try :
-            s.settimeout(2)
-            result = s.recv(BUFFER_SIZE)
-            ACKcounter += 1
-            if ACKcounter == frameCounter :
+            if not bytes_read and ACKcounter == seqNumber:
                 break
+            else :
+                #s.send(bytes_read+("%.8d"%seqNumber).encode())
+                chance(bytes_read+("%.8d"%seqNumber).encode())
+                seqNumber+=1
+        try :
+            s.settimeout(0.001)
+            result = s.recv(BUFFER_SIZE)
+            if ACKcounter == int(result) :
+                ACKcounter += 1
+    
         except socket.timeout:
-            print("Time is out. We sent back.")
-            # for i in range(ACKcounter,frameCounter):
-            #     s.send(bytes_read) 
-        
-        #print('ACK', int(frameCounter))
-
-        #chance(lambda: s.send(bytes_read))
-      
+            f.seek(-(seqNumber - ACKcounter)*BUFFER_SIZE,os.SEEK_CUR)
+            seqNumber = ACKcounter
+                
         progress.update(len(bytes_read))
+
 s.send("EndOfFile".encode())
 s.close()
