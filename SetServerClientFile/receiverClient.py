@@ -40,21 +40,28 @@ with open(filename, "wb") as f :
 
         bytes_read, address = s.recvfrom(BUFFER_SIZE+8) 
         if bytes_read == b"EndOfFile" :
+            # to stop writing
             break
+        # we separate "seqNumber" from the rest of the buffer
+        # `-` means reading from right to left
+        # Example from ipython
+        # In [4]: x
+        # Out[4]: b'aedfgh'
+        # In [5]: x[-1:]
+        # Out[5]: b'h'
         seqNumber = int(bytes_read[-8:])
-        #breakpoint()
-       
+
         if seqNumber == frameCounter :
             s.sendto(str(frameCounter).encode(), address)
-            frameCounter+=1
+            # s = socket
+            # sendto ≠ send
+            # sendto : send bytes (str(frameCounter).encode()) to this `address`
+            # first i converted framecounter to string with str, then to bytes with encode() 
+            frameCounter+=1 
             f.write(bytes_read[:-8])
             progress.update(len(bytes_read))
         else :
-            print("Error")
-            #s.sendto(str(frameCounter-1).encode(), address)
-
-
-#client_socket.close()
+            print("Error from receiver side.")
 
 s.close()
 
