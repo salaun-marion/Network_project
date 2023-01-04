@@ -2,9 +2,10 @@ import socket
 import tqdm
 import os
 
-# IP address and port
-SERVER_HOST = "0.0.0.0"
-SERVER_PORT = 12345
+#ip address of the server & port
+host = "127.0.0.1"
+port = 12345
+
 
 #receive 4096 bytes each time
 BUFFER_SIZE = 1400
@@ -13,14 +14,16 @@ SEPARATOR = "<SEPARATOR>"
 
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
-#'bind()'has only one argument possible : so we do a tuple ( , ) and we give to bind
-# same difference as 'print(x,y)' and 'print((x,y))'
-s.bind((SERVER_HOST,SERVER_PORT))
+#To etablish the connection
+print(f"[+] Connecting to {host}:{port}")
+s.connect((host,port))
+print("[+] Connected.")
 
-print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
+# Handshake send
+s.send(b"glouglou Handshake")
 
 #receive file infos
-received, addr = s.recvfrom(BUFFER_SIZE)
+received = s.recv(BUFFER_SIZE)
 received = received.decode()
 filename, filesize = received.split(SEPARATOR)
 
@@ -38,7 +41,7 @@ with open(filename, "wb") as f :
     #'wb': write in binary
     while True :
 
-        bytes_read, address = s.recvfrom(BUFFER_SIZE+8) 
+        bytes_read = s.recv(BUFFER_SIZE+8) 
         if bytes_read == b"EndOfFile" :
             # to stop writing
             break
@@ -52,7 +55,7 @@ with open(filename, "wb") as f :
         seqNumber = int(bytes_read[-8:])
 
         if seqNumber == frameCounter :
-            s.sendto(str(frameCounter).encode(), address)
+            s.send(str(frameCounter).encode())
             # s = socket
             # sendto ≠ send
             # sendto : send bytes (str(frameCounter).encode()) to this `address`

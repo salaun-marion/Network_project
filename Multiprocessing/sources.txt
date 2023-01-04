@@ -1,0 +1,4 @@
+SOURCES : 
+
+- Python documentation : https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming
+- Multiprocessing in Python by NeuralNine : https://www.youtube.com/watch?v=GT10PnUFLlE

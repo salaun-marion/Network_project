@@ -7,16 +7,14 @@ import os
 #to set up the path for the file
 import sys
 
-
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 1400
 WINDOW_SIZE = 4
 #we decrease the size of the buffer to 1400 because it's the size of an ip packet
 
-#ip address of the server & port
-host = "127.0.0.1"
-port = 12345
-
+# IP address and port
+SERVER_HOST = "0.0.0.0"
+SERVER_PORT = 12345
 
 #name of the file we want to send and his size
 filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFile/scully_hitchcock_brooklyn99.png"
@@ -26,21 +24,25 @@ print(f"{filesize}")
 #create the server socket
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
-#To etablish the connection
-print(f"[+] Connecting to {host}:{port}")
-s.connect((host,port))
-print("[+] Connected.")
+
+#'bind()'has only one argument possible : so we do a tuple ( , ) and we give to bind
+# same difference as 'print(x,y)' and 'print((x,y))'
+s.bind((SERVER_HOST,SERVER_PORT))
+print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
+
+#Handshake reception
+handshake, address = s.recvfrom(BUFFER_SIZE)
 
 #thanks to random.random() in 90% of cases server will send the document
 
 #------- Error system to use after ----
 def chance(bytes):
     if random.random() > 0.1: 
-        s.send(bytes)
+        s.sendto(bytes, address)
 
 #-----------
 #send the filename and the filesize
-s.send(f"{filename}{SEPARATOR}{filesize}".encode())
+s.sendto(f"{filename}{SEPARATOR}{filesize}".encode(), address)
 
 #start sending the file
 progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024)
@@ -68,7 +70,7 @@ with open(filename, "rb") as f :
             s.settimeout(0.01)
             # connected to EstimatedRTT -> something to deepen :) 
             # settimeout function means wait for answer, here wait 0.01 sec
-            result = s.recv(BUFFER_SIZE)
+            result, address = s.recvfrom(BUFFER_SIZE)
             # result = frameCounter already received by the receiver 
             # recv ≠ recfrom
             # same difference as sendto ≠ send
@@ -84,5 +86,5 @@ with open(filename, "rb") as f :
                 
         progress.update(len(bytes_read))
 
-s.send("EndOfFile".encode())
+s.sendto("EndOfFile".encode(), address)
 s.close()
