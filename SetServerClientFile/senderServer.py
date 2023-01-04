@@ -1,11 +1,7 @@
 import random
 import socket
 import tqdm  
-#nice progress bar with 'tqdm'library
-#tqdm means te quiero demasiado ^^
 import os
-#to set up the path for the file
-import sys
 
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 1400
@@ -23,9 +19,7 @@ filesize = os.path.getsize(filename)
 #create the server socket
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
-
 #'bind()'has only one argument possible : so we do a tuple ( , ) and we give to bind
-# same difference as 'print(x,y)' and 'print((x,y))'
 s.bind((SERVER_HOST,SERVER_PORT))
 print(f"[*] SERVER ---- ")
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
@@ -59,31 +53,17 @@ with open(filename, "rb") as f :
                 #to stop the sending
                 break
             else :
-                #s.send(bytes_read+("%.8d"%seqNumber).encode())
                 chance(bytes_read+("%.8d"%seqNumber).encode())
-                #encode() transform seqNumber which is `int` into `bytes``
-                #seqNumber has the size of 8
-                # 1, 2, 3, 4   .... 700 000 : 8 chiffres possibles pour être tranquille
-                
                 seqNumber+=1
         try :
-            s.settimeout(0.01)
-            # connected to EstimatedRTT -> something to deepen :) 
+            s.settimeout(0.001)
             # settimeout function means wait for answer, here wait 0.01 sec
             result, address = s.recvfrom(BUFFER_SIZE)
-            # result = frameCounter already received by the receiver 
-            # recv ≠ recfrom
-            # same difference as sendto ≠ send
-
             if ACKcounter == int(result) :
                 ACKcounter += 1
-    
         except socket.timeout:
             f.seek(-(seqNumber - ACKcounter)*BUFFER_SIZE,os.SEEK_CUR)
-            # seek() function allows la "position de la tête de lecture" to be changed into a new position
-            # `os.SEEK_CUR` : avoid that the pointer will be BEFORE the beginning of the file
-            seqNumber = ACKcounter
-                
+            seqNumber = ACKcounter    
         progress.update(len(bytes_read))
 
 s.sendto("EndOfFile".encode(), address)

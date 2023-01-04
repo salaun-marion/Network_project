@@ -2,4 +2,9 @@
 
 python senderServer.py &
 sleep 2
-python receiverClient.py &
+
+for n in {1..$1};
+do
+
+    python receiverClient.py &
+done
