@@ -19,7 +19,6 @@ SERVER_PORT = 12345
 #name of the file we want to send and his size
 filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFile/scully_hitchcock_brooklyn99.png"
 filesize = os.path.getsize(filename)
-print(f"{filesize}")
 
 #create the server socket
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -28,6 +27,7 @@ s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 #'bind()'has only one argument possible : so we do a tuple ( , ) and we give to bind
 # same difference as 'print(x,y)' and 'print((x,y))'
 s.bind((SERVER_HOST,SERVER_PORT))
+print(f"[*] SERVER ---- ")
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
 #Handshake reception

@@ -6,7 +6,6 @@ import os
 host = "127.0.0.1"
 port = 12345
 
-
 #receive 4096 bytes each time
 BUFFER_SIZE = 1400
 WINDOW_SIZE = 4
@@ -15,6 +14,7 @@ SEPARATOR = "<SEPARATOR>"
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 #To etablish the connection
+print(f"[*] CLIENT ---- ")
 print(f"[+] Connecting to {host}:{port}")
 s.connect((host,port))
 print("[+] Connected.")

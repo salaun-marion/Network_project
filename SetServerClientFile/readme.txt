@@ -10,8 +10,11 @@ Problems encounters with Windows 10 :
 How to create argument system for CLI :
 https://www.youtube.com/watch?v=QJBVjBq4c7E
 
-Go-Back-N : https://www.youtube.com/watch?v=QD3oCelHJ20
+Go-Back-N : 
+- https://www.baeldung.com/cs/networking-go-back-n-protocol
+- https://www.youtube.com/watch?v=QD3oCelHJ20
 
+Bash script : https://stackoverflow.com/questions/39452132/how-to-start-2-programs-that-need-separate-terminals-from-a-bash-script
 
 ------- HOW TO ------
 
