@@ -9,19 +9,20 @@ BUFFER_SIZE = 1400
 WINDOW_SIZE = 4
 #we decrease the size of the buffer to 1400 because it's the size of an ip packet
 
+# arguments received 
+nbClient = sys.argv[1]
+nbServer = sys.argv[2]
+
 # IP address and port
 SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 12345
 
-# arguments received 
-nbClient = sys.argv[1]
-
 #name of the file we want to send and his size
 
-filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/1Gb_fileTest_Doctor_Who_S04E03_Planet_of_the_Ood.mkv"
+#filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/1Gb_fileTest_Doctor_Who_S04E03_Planet_of_the_Ood.mkv"
 #filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/50Mb_fileTest_photo.zip"
 #filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/readme.txt"
-#filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/scully_hitchcock_brooklyn99.png"
+filename = "scully_hitchcock_brooklyn99.png"
 filesize = os.path.getsize(filename)
 
 #create the server socket
@@ -29,12 +30,11 @@ s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 #'bind()'has only one argument possible : so we do a tuple (,) and we give to bind
 s.bind((SERVER_HOST,SERVER_PORT))
-print(f"\n[*]---- SERVER ---- ")
-print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
+print(f"\n[*]########## SERVER ##########")
+print(f"\n[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
 #Handshake reception
 handSMap = {}
-
 for i in range (0, int(nbClient)) :
     handshake, address = s.recvfrom(BUFFER_SIZE)
     handSMap[address]= 0
@@ -50,14 +50,14 @@ def chance(bytes):
 
 #send the filename and the filesize
 for address in handSMap.keys() :     
-    s.sendto(f"{filename}{SEPARATOR}{filesize}".encode(),address)
+    print(f"{filename}")
+    s.sendto(f"{nbServer+filename}{SEPARATOR}{filesize}".encode(),address)
 
-#start sending the file
-progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit ="B", unit_scale=True, unit_divisor=1024)
+#nice fancy bar for progression
+progress = tqdm.tqdm(range(filesize), f"\nSending {filename}", unit ="B", unit_scale=True, unit_divisor=1024)
 
-#Go-Back-N starts here -----
+#---- Go-Back-N starts here -----
 
-#ACKcounter = 0
 #Now we have changed ACK counter = min(handSMap.values())
 seqNumber = 0
 
