@@ -19,10 +19,10 @@ SERVER_PORT = 12345
 
 #name of the file we want to send and his size
 
-#filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/1Gb_fileTest_Doctor_Who_S04E03_Planet_of_the_Ood.mkv"
-#filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/50Mb_fileTest_photo.zip"
-#filename = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion/readme.txt"
-filename = "scully_hitchcock_brooklyn99.png"
+#filename = "1Gb_fileTest_Doctor_Who_S04E03_Planet_of_the_Ood.mkv"
+#filename = "50Mb_fileTest_photo.zip"
+filename = "readme.txt"
+#filename = "scully_hitchcock_brooklyn99.png"
 filesize = os.path.getsize(filename)
 
 #create the server socket
@@ -33,16 +33,16 @@ s.bind((SERVER_HOST,SERVER_PORT))
 print(f"\n[*]########## SERVER ##########")
 print(f"\n[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-#Handshake reception
+#Handshake reception - dictionnary in python
 handSMap = {}
 for i in range (0, int(nbClient)) :
     handshake, address = s.recvfrom(BUFFER_SIZE)
     handSMap[address]= 0
 
 #thanks to random.random() in 90% of cases server will send the document
-#------- Error system to use after ----
+#------- Error system ----
 def chance(bytes):
-    if random.random() > 0.1 : 
+    if random.random() > 0.9 : 
     #if True : 
         for address in handSMap.keys() :     
             s.sendto(bytes, address)
@@ -58,7 +58,7 @@ progress = tqdm.tqdm(range(filesize), f"\nSending {filename}", unit ="B", unit_s
 
 #---- Go-Back-N starts here -----
 
-#Now we have changed ACK counter = min(handSMap.values())
+#Now we have changed ACK counter = handSMap.values()
 seqNumber = 0
 
 def windowsClosed(seq) :
@@ -71,7 +71,9 @@ with open(filename, "rb") as f :
     while True :
        
         if seqNumber - min(handSMap.values()) < WINDOW_SIZE:
+            print(f"before read " + f.tell())
             bytes_read = f.read(BUFFER_SIZE)
+            print(f"after read " + f.tell())
 
             if bytes_read :
                 chance(bytes_read+("%.8d"%seqNumber).encode())
@@ -88,7 +90,10 @@ with open(filename, "rb") as f :
                 handSMap[address] += 1
             #print(f"SENDER : ACK min : {min(handSMap.values())} | \n All Map : {handSMap}")
         except socket.timeout:
+            print(f.tell())
             f.seek(-(seqNumber - min(handSMap.values()))*BUFFER_SIZE,os.SEEK_CUR)
+            print(f"SENDER : seqNumber : {seqNumber} | ACK min : {min(handSMap.values())}")
+            print(f.tell())
             seqNumber = min(handSMap.values())  
         progress.update(len(bytes_read))
 

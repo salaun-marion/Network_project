@@ -1,3 +1,4 @@
+import random
 import socket
 import tqdm
 import os
@@ -8,7 +9,7 @@ BUFFER_SIZE = 1400
 WINDOW_SIZE = 4
 SEPARATOR = "<SEPARATOR>"
 
-# arguments received 
+#arguments received 
 idprocess = sys.argv[1]
 
 #ip address of the client & port
@@ -44,24 +45,28 @@ except FileExistsError :
 filename = "[RCV"+idprocess+"]_"+ os.path.basename(filename) 
 filesize = int(filesize)
 
+#------- Error system ----
+def chance(bytes):
+    if random.random() > 0.1 :  
+        s.send(bytes)
+#-----------
+
 #nice fancy progress bar
 progress = tqdm.tqdm(range(filesize), f"\nID : {idprocess} is receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
 
 # Go-back-n starts here ----
 frameCounter = 0
 
-print(path+filename)
 with open(path+"/"+filename, "wb") as f :
     #'wb': write in binary
     while True :
-
         bytes_read = s.recv(BUFFER_SIZE+8) 
         if bytes_read == b"EndOfFile" :
             # to stop writing
             break
         seqNumber = int(bytes_read[-8:])
         #print(f"RECEIVER :  seqNumber {seqNumber} | framecounter:{frameCounter}")
-
+        
         if seqNumber == frameCounter :
             s.send(str(frameCounter).encode())
             frameCounter+=1 
@@ -72,5 +77,3 @@ with open(path+"/"+filename, "wb") as f :
             #print("Ignored.")
 
 s.close()
-
-
