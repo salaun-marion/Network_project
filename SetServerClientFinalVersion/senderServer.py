@@ -42,7 +42,7 @@ for i in range (0, int(nbClient)) :
 #thanks to random.random() in 90% of cases server will send the document
 #------- Error system ----
 def chance(bytes):
-    if random.random() > 0.9 : 
+    if random.random() > 0.1 : 
     #if True : 
         for address in handSMap.keys() :     
             s.sendto(bytes, address)
@@ -71,9 +71,9 @@ with open(filename, "rb") as f :
     while True :
        
         if seqNumber - min(handSMap.values()) < WINDOW_SIZE:
-            print(f"before read " + f.tell())
+            #print(f"before read " + f.tell())
             bytes_read = f.read(BUFFER_SIZE)
-            print(f"after read " + f.tell())
+            #print(f"after read " + f.tell())
 
             if bytes_read :
                 chance(bytes_read+("%.8d"%seqNumber).encode())
@@ -90,10 +90,11 @@ with open(filename, "rb") as f :
                 handSMap[address] += 1
             #print(f"SENDER : ACK min : {min(handSMap.values())} | \n All Map : {handSMap}")
         except socket.timeout:
-            print(f.tell())
-            f.seek(-(seqNumber - min(handSMap.values()))*BUFFER_SIZE,os.SEEK_CUR)
-            print(f"SENDER : seqNumber : {seqNumber} | ACK min : {min(handSMap.values())}")
-            print(f.tell())
+            #print(f.tell())
+            #f.seek(-(seqNumber - min(handSMap.values()))*BUFFER_SIZE,os.SEEK_CUR)
+            f.seek((min(handSMap.values())*BUFFER_SIZE),os.SEEK_SET)
+            #print(f"SENDER : seqNumber : {seqNumber} | ACK min : {min(handSMap.values())}")
+            #print(f.tell())
             seqNumber = min(handSMap.values())  
         progress.update(len(bytes_read))
 
