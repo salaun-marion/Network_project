@@ -47,7 +47,7 @@ filesize = int(filesize)
 
 #------- Error system ----
 def chance(bytes):
-    if random.random() > 0.1 :  
+    if random.random() > 0.5:  
         s.send(bytes)
 #-----------
 
@@ -66,9 +66,9 @@ with open(path+"/"+filename, "wb") as f :
             break
         seqNumber = int(bytes_read[-8:])
         #print(f"RECEIVER :  seqNumber {seqNumber} | framecounter:{frameCounter}")
-        
+        chance(str(frameCounter).encode())
+
         if seqNumber == frameCounter :
-            s.send(str(frameCounter).encode())
             frameCounter+=1 
             f.write(bytes_read[:-8])
             progress.update(len(bytes_read))

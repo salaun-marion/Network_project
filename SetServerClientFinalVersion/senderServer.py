@@ -20,8 +20,8 @@ SERVER_PORT = 12345
 #name of the file we want to send and his size
 
 #filename = "1Gb_fileTest_Doctor_Who_S04E03_Planet_of_the_Ood.mkv"
-#filename = "50Mb_fileTest_photo.zip"
-filename = "readme.txt"
+filename = "50Mb_fileTest_photo.zip"
+#filename = "readme.txt"
 #filename = "scully_hitchcock_brooklyn99.png"
 filesize = os.path.getsize(filename)
 
@@ -42,7 +42,7 @@ for i in range (0, int(nbClient)) :
 #thanks to random.random() in 90% of cases server will send the document
 #------- Error system ----
 def chance(bytes):
-    if random.random() > 0.1 : 
+    if random.random() > 0.5 : 
     #if True : 
         for address in handSMap.keys() :     
             s.sendto(bytes, address)
@@ -59,6 +59,7 @@ progress = tqdm.tqdm(range(filesize), f"\nSending {filename}", unit ="B", unit_s
 #---- Go-Back-N starts here -----
 
 #Now we have changed ACK counter = handSMap.values()
+#'min(handSMap.values())' means the lowest ACK number in the window size
 seqNumber = 0
 
 def windowsClosed(seq) :
@@ -69,11 +70,9 @@ def windowsClosed(seq) :
 
 with open(filename, "rb") as f :
     while True :
-       
+        print(f"seqNumber: {seqNumber}, ACK min : {min(handSMap.values())}")
         if seqNumber - min(handSMap.values()) < WINDOW_SIZE:
-            #print(f"before read " + f.tell())
             bytes_read = f.read(BUFFER_SIZE)
-            #print(f"after read " + f.tell())
 
             if bytes_read :
                 chance(bytes_read+("%.8d"%seqNumber).encode())
@@ -85,16 +84,16 @@ with open(filename, "rb") as f :
             s.settimeout(0.001)
             # settimeout function means wait for answer, here wait 0.001 sec
             result, address = s.recvfrom(BUFFER_SIZE)
-            #print(f"SENDER : seqNumber : {seqNumber} | ACK : {handSMap[address]} | framecounter : {result} ")
-            if handSMap[address] == int(result) :
-                handSMap[address] += 1
-            #print(f"SENDER : ACK min : {min(handSMap.values())} | \n All Map : {handSMap}")
+            if handSMap[address] <= int(result) :
+                handSMap[address] = int(result)
+            else :
+                print(f"\n unexpected result {result} :)")
+                #raise socket.timeout()
+            # print(f"SENDER : ACK min : {min(handSMap.values())} | \n All Map : {handSMap}")
         except socket.timeout:
-            #print(f.tell())
-            #f.seek(-(seqNumber - min(handSMap.values()))*BUFFER_SIZE,os.SEEK_CUR)
+            print("Timeout")
             f.seek((min(handSMap.values())*BUFFER_SIZE),os.SEEK_SET)
-            #print(f"SENDER : seqNumber : {seqNumber} | ACK min : {min(handSMap.values())}")
-            #print(f.tell())
+            #os.SEEK_SET means 'set it to the beginning'
             seqNumber = min(handSMap.values())  
         progress.update(len(bytes_read))
 
