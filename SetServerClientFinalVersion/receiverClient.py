@@ -4,13 +4,14 @@ import tqdm
 import os
 import sys
 
-#receive 4096 bytes each time
-BUFFER_SIZE = 1400
-WINDOW_SIZE = 4
-SEPARATOR = "<SEPARATOR>"
-
 #arguments received 
 idprocess = sys.argv[1]
+probability = float(sys.argv[2])
+window_size = sys.argv[3]
+
+BUFFER_SIZE = 1400
+WINDOW_SIZE = window_size
+SEPARATOR = "<SEPARATOR>"
 
 #ip address of the client & port
 host = "127.0.0.1"
@@ -47,7 +48,7 @@ filesize = int(filesize)
 
 #------- Error system ----
 def chance(bytes):
-    if random.random() > 0.5:  
+    if random.random() > probability:  
         s.send(bytes)
 #-----------
 
@@ -65,7 +66,6 @@ with open(path+"/"+filename, "wb") as f :
             # to stop writing
             break
         seqNumber = int(bytes_read[-8:])
-        #print(f"RECEIVER :  seqNumber {seqNumber} | framecounter:{frameCounter}")
         chance(str(frameCounter).encode())
 
         if seqNumber == frameCounter :
@@ -74,6 +74,5 @@ with open(path+"/"+filename, "wb") as f :
             progress.update(len(bytes_read))
         else :
             pass
-            #print("Ignored.")
 
 s.close()

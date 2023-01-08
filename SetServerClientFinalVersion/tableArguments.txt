@@ -1,0 +1,23 @@
+### => For Everyone ###
+# toolname          starter.sh    $0
+# number_of_server  1 or 10       $1 
+# id_process        i             $i
+# number_of_proc    2 or 10       $2
+# filename          .mkv or .zip  $3
+# probability       0.1           $4
+# protocol          go-back-n     $5
+# window_size       4             $6
+
+#----
+### => For Server ###
+# number_of_client  2 or 10       $2        1
+# number_of_server  1 or 10       $i        2
+# filename          .mkv or .zip  $3        3
+# probability       0.1           $4        5
+# window_size       4             $5        7
+
+#----
+### => For Client ###
+# number_of_client  2 or 10       $j        1
+# probability       0.1           $4        5
+

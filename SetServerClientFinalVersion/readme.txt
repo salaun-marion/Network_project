@@ -14,7 +14,9 @@ Go-Back-N :
 - https://www.baeldung.com/cs/networking-go-back-n-protocol
 - https://www.youtube.com/watch?v=QD3oCelHJ20
 
-Bash script : https://stackoverflow.com/questions/39452132/how-to-start-2-programs-that-need-separate-terminals-from-a-bash-script
+Bash script : 
+- executed process at the same time : https://stackoverflow.com/questions/39452132/how-to-start-2-programs-that-need-separate-terminals-from-a-bash-script
+- how to get running time of a process with bash : https://unix.stackexchange.com/questions/52313/how-to-get-execution-time-of-a-script-effectively 
 
 ------- HOW TO ------
 
