@@ -10,10 +10,6 @@ nbClient = sys.argv[2]
 
 #name of the file we want to send
 filename = sys.argv[3]
-#filename = "1Gb.mkv"
-#filename = "50Mb.zip"
-#filename = "readme.txt"
-#filename = "scully_hitchcock_brooklyn99.png"
 
 #probability = float(sys.argv[4])
 probability = 0.1

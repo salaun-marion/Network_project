@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# scenario 2 : send to each client (up to 10), 10 files of at least 50 Mb for each
+# scenario 3 : send to each client (up to 6), 1 file of up to 300Mb
 
 start=`date +%s`
 
@@ -24,7 +24,7 @@ md5 Client*/*
 echo "## Md5 for original file ##"
 md5 300Mb_Libreoffice.dmg
 
-runtime=$((end-start-10))
+runtime=$((end-start-1))
 
 hours=$((runtime / 3600)); 
 minutes=$(( (runtime % 3600) / 60 )); 

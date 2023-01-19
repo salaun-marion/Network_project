@@ -35,7 +35,7 @@ received = received.decode()
 filename, filesize = received.split(SEPARATOR)
 
 #create the path to store the file
-directory = "Download"+idprocess
+directory = "Client"+idprocess
 parent_dir = "/Users/marion/Documents/00_BINFO2/3.5.Networks_1/Network_project/SetServerClientFinalVersion"
 path = os.path.join(parent_dir, directory)
 try :
@@ -66,6 +66,8 @@ with open(path+"/"+filename, "wb") as f :
             # to stop writing
             break
         seqNumber = int(bytes_read[-8:])
+
+        #send ACK
         chance(str(frameCounter).encode())
 
         if seqNumber == frameCounter :
@@ -74,5 +76,4 @@ with open(path+"/"+filename, "wb") as f :
             progress.update(len(bytes_read))
         else :
             pass
-
 s.close()

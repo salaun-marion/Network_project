@@ -19,7 +19,7 @@ wait
 end=`date +%s`
 
 echo "## Md5 Checksum for files received ##"
-md5 Down*/*
+md5 Client*/*
 
 echo "## Md5 for original file ##"
 md5 50Mb.zip
